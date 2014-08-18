@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- encoding: utf-8 -*-
+
 import re, os, io, hashlib
-from binascii import hexlify
 from PIL import Image, ImageFile
 
 if __name__ == "__main__":
@@ -53,7 +53,7 @@ if __name__ == "__main__":
             # iterate over all signature index footers
             #
             for footer in signature["indexes"]["footers"]:
-                
+                    
                 #
                 # check if the footer is behind the header
                 #
@@ -67,46 +67,46 @@ if __name__ == "__main__":
                     #
                     # create the artefact hash
                     #
-                    art_hash = hashlib.sha224(artefact).hexdigest()# +
+                    art_hash = hashlib.sha224(artefact).hexdigest()
 
                     #
                     # generate filename
                     #
-                    filename = art_hash + "." + signature["type"]   # generate filename
+                    filename = art_hash + "." + signature["type"]
 
                     #
                     # check if file not already exists:
                     #
-                    if os.path.isfile("images/" + filename):
-                        print "exists"
-                        continue
-
-                    #
-                    # saving process
-                    #
-                    try:
-                        stream   = io.BytesIO(artefact)                 # turn artefact into a byte buffer
-                        image    = Image.open(stream)                   # open the bytebuffer as image
-                        image.LOAD_TRUNCATED_IMAGES = True              # enable the saving of truncated images
-                        image.save("images/" + filename)                # save image
+                    if not os.path.isfile("images/" + filename):
 
                         #
-                        # append the success to the results
+                        # saving the artefact as a reconstructed file
                         #
-                        results.append("succes " + filename)
+                        try:
+                            stream   = io.BytesIO(artefact)     # turn artefact into a byte buffer
+                            image    = Image.open(stream)       # open the bytebuffer as image
+                            ImageFile.LOAD_TRUNCATED_IMAGES = True  # enable the saving of truncated images
+                            image.save("images/" + filename)    # save image
 
-                    except Exception as error:
-                        #
-                        # append the excepion to the results
-                        #
-                        results.append("error " + str(error))
+                            #
+                            # append the success to the results
+                            #
+                            results.append("succes " + filename)
+
+                        except Exception as error:
+                            #
+                            # append the excepion to the results
+                            #
+                            results.append("error " + str(error))
+                    else:
+                        print "file exitsts"
+
 
     for result in results:
         if result.startswith("succes"):
             print result
         else:
             #
-            # for debugging
+            # only for debugging
             #
-            # print result
-            pass
+            print result
